@@ -3,8 +3,12 @@
 <head>
     <style>
         .content {
-            max-width: 500px;
+            max-width: 694px;
             margin: auto;
+        }
+
+        table, td {
+            border: 1px solid black;
         }
     </style>
 </head>
@@ -14,61 +18,60 @@
 <body>
     <div class="content">
         <h1>Bibliófilo's</h1>
-
         <h2>Livros</h2>
+
         <?php
-        require 'mysql_server.php';
+            require 'mysql_server.php';
 
-        $conexao = RetornaConexao();
+            $conexao = RetornaConexao();
 
-        $titulo = 'titulo';
-        $autor = 'autor';
-        $classificacao = 'classificacao';
-        /*TODO-1: Adicione uma variavel para cada coluna */
+            $titulo = 'titulo';
+            $autor = 'autor';
+            $classificacao = 'classificacao';
+            $data_publicacao = 'data_publicacao';
+            $num_paginas = 'num_paginas';
+            $idioma = 'idioma';
 
+            $sql = "SELECT 
+                    $titulo, 
+                    $autor, 
+                    $classificacao, 
+                    $data_publicacao, 
+                    $num_paginas, 
+                    $idioma FROM livros;";
 
-        $sql =
-            'SELECT ' . $titulo .
-            '     , ' . $autor .
-            '     , ' . $classificacao .
-            /*TODO-2: Adicione cada variavel a consulta abaixo */
-            '  FROM livros';
+            $resultado = mysqli_query($conexao, $sql);
 
+            if (!$resultado) echo mysqli_error($conexao);
 
-        $resultado = mysqli_query($conexao, $sql);
-        if (!$resultado) {
-            echo mysqli_error($conexao);
-        }
+            echo "<table>
+                    <tr>
+                        <th>$titulo</th>
+                        <th>$autor</th>
+                        <th>$classificacao</th>
+                        <th>$data_publicacao</th>
+                        <th>$num_paginas</th>
+                        <th>$idioma</th>
+                    <tr>";
 
+            if (mysqli_num_rows($resultado) > 0) {
 
+                while ($registro = mysqli_fetch_assoc($resultado)) {
 
-        $cabecalho =
-            '<table>' .
-            '    <tr>' .
-            '        <th>' . $titulo . '</th>' .
-            '        <th>' . $autor . '</th>' .
-            /* TODO-3: Adicione as variaveis ao cabeçalho da tabela */
-            '        <th>' . $classificacao . '</th>' .
-            '    </tr>';
-
-        echo $cabecalho;
-
-        if (mysqli_num_rows($resultado) > 0) {
-
-            while ($registro = mysqli_fetch_assoc($resultado)) {
-                echo '<tr>';
-
-                echo '<td>' . $registro[$titulo] . '</td>' .
-                    '<td>' . $registro[$autor] . '</td>' .
-                    /* TODO-4: Adicione a tabela os novos registros. */
-                    '<td>' . $registro[$classificacao] . '</td>';
-                echo '</tr>';
+                    echo "<tr>
+                        <td>$registro[$titulo]</td>
+                        <td>$registro[$autor]</td>
+                        <td>$registro[$classificacao]</td>
+                        <td>$registro[$data_publicacao]</td>
+                        <td>$registro[$num_paginas]</td>
+                        <td>$registro[$idioma]</td>
+                    </tr>";
+                }
             }
-            echo '</table>';
-        } else {
-            echo '';
-        }
-        FecharConexao($conexao);
+
+            echo "</table>";
+
+            FecharConexao($conexao);
         ?>
     </div>
 </body>
